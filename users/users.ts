@@ -23,7 +23,6 @@ export const me = api(
         const auth = getAuthData();
         if (!auth) throw APIError.unauthenticated("Belum ter-autentikasi");
 
-
         return { userID: auth.userID };
     }
 );
