@@ -1,12 +1,12 @@
 import { api } from 'encore.dev/api';
-import { getAuthData } from '~encore/auth';
-import { APIError } from 'encore.dev/api';
+import { requireAuth } from '../lib/authz';
 
 interface PingResponse {
     ok: true;
 }
 
 interface MeResponse {
+    isAuthenticated: true;
     userID: string;
 }
 
@@ -18,11 +18,13 @@ export const ping = api(
 );
 
 export const me = api(
-    { expose: true, method: "GET", path: "/users/me" },
+    { expose: true, auth: true, method: 'GET', path: '/users/me' },
     async (): Promise<MeResponse> => {
-        const auth = getAuthData();
-        if (!auth) throw APIError.unauthenticated("Belum ter-autentikasi");
+        const authData = requireAuth();
 
-        return { userID: auth.userID };
+        return {
+            isAuthenticated: true,
+            userID: authData.userID,
+        };
     }
 );
